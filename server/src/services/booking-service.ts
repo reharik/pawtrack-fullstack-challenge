@@ -1,5 +1,9 @@
 import { v4 as uuid } from 'uuid';
-import type { Booking, BookingStatus, PaginatedResult, AuthContext } from '../types/index.js';
+import type {
+  Booking,
+  BookingStatus,
+  PaginatedResult,
+} from '../types/index.js';
 import { VALID_TRANSITIONS } from '../types/index.js';
 import { store } from '../store/memory-store.js';
 import { eventBus } from './event-emitter.js';
@@ -22,6 +26,21 @@ interface CreateBookingParams {
   notes: string;
   createdBy: string;
 }
+const toInterval = (
+  date: string,
+  startTime: string,
+  endTime: string,
+): { start: Date; end: Date } => {
+  const result = {
+    start: new Date(`${date}T${startTime}`),
+    end: new Date(`${date}T${endTime}`),
+  };
+  if (result.end <= result.start) {
+    // result.end should be next day
+    result.end = new Date(result.end.getTime() + 24 * 60 * 60 * 1000);
+  }
+  return result;
+};
 
 export class BookingService {
   /**
@@ -36,16 +55,20 @@ export class BookingService {
     // Filter by date if provided
     if (date) {
       // Match bookings on the requested date
-      bookings = bookings.filter(b => b.scheduledDate.startsWith(date));
+      bookings = bookings.filter((b) => b.scheduledDate.startsWith(date));
     }
 
     // Filter by status if provided
     if (status) {
-      bookings = bookings.filter(b => b.status === status);
+      bookings = bookings.filter((b) => b.status === status);
     }
 
     // Sort by scheduled date descending (newest first)
-    bookings.sort((a, b) => new Date(b.scheduledDate).getTime() - new Date(a.scheduledDate).getTime());
+    bookings.sort(
+      (a, b) =>
+        new Date(b.scheduledDate).getTime() -
+        new Date(a.scheduledDate).getTime(),
+    );
 
     const total = bookings.length;
     const totalPages = Math.ceil(total / limit);
@@ -67,28 +90,54 @@ export class BookingService {
    * Checks for overlapping bookings with the same sitter.
    */
   public async createBooking(params: CreateBookingParams): Promise<Booking> {
-    const { tenantId, petId, sitterId, scheduledDate, startTime, endTime, notes, createdBy } = params;
+    const {
+      tenantId,
+      petId,
+      sitterId,
+      scheduledDate,
+      startTime,
+      endTime,
+      notes,
+      createdBy,
+    } = params;
 
-    // Check for overlapping bookings with the same sitter
-    const existingBookings = store.getAllBookings().filter(
-      b => b.sitterId === sitterId && b.status !== 'cancelled',
-    );
+    const pet = store.getPet(petId);
+    const sitter = store.getSitter(sitterId);
+    if (
+      !pet ||
+      !sitter ||
+      pet.tenantId !== tenantId ||
+      sitter.tenantId !== tenantId
+    ) {
+      throw new Error('Pet or sitter not found');
+    }
 
-    const hasOverlap = existingBookings.some(b => {
-      const existingStart = new Date(`${b.scheduledDate.split('T')[0]}T${b.startTime}`);
-      const existingEnd = new Date(`${b.scheduledDate.split('T')[0]}T${b.endTime}`);
-      const newStart = new Date(`${scheduledDate.split('T')[0]}T${startTime}`);
-      const newEnd = new Date(`${scheduledDate.split('T')[0]}T${endTime}`);
+    // Check for overlapping bookings with the same sitter or pet
+    const candidates = store
+      .getAllBookings()
+      .filter(
+        (b) =>
+          b.tenantId === tenantId &&
+          b.status !== 'cancelled' &&
+          (b.sitterId === sitterId || b.petId === petId),
+      );
 
-      return newStart < existingEnd && newEnd > existingStart;
+    const newInterval = toInterval(scheduledDate, startTime, endTime);
+    const hasOverlap = candidates.some((b) => {
+      const existing = toInterval(b.scheduledDate, b.startTime, b.endTime);
+      return (
+        newInterval.start < existing.end && newInterval.end > existing.start
+      );
     });
 
     if (hasOverlap) {
-      throw new Error('Sitter has an overlapping booking for this time slot');
+      throw new Error(
+        'Sitter or pet has an overlapping booking for this time slot',
+      );
     }
 
     // Simulate async operation (like a database write)
-    await new Promise(resolve => setTimeout(resolve, 10));
+    await new Promise((resolve) => setTimeout(resolve, 10));
 
     const now = new Date().toISOString();
     const booking: Booking = {
@@ -126,10 +175,12 @@ export class BookingService {
     bookingId: string,
     newStatus: BookingStatus,
     changedBy: string,
+    tenantId: string,
   ): { success: boolean; booking?: Booking; error?: string } {
     const booking = store.getBooking(bookingId);
 
-    if (!booking) {
+    if (!booking || booking.tenantId !== tenantId) {
+      // slightly opaque error message to prevent exposing unnecessary information
       return { success: false, error: 'Booking not found' };
     }
 
@@ -166,8 +217,12 @@ export class BookingService {
   /**
    * Get a single booking by ID.
    */
-  public getBooking(bookingId: string): Booking | undefined {
-    return store.getBooking(bookingId);
+  public getBooking(bookingId: string, tenantId: string): Booking | undefined {
+    const booking = store.getBooking(bookingId);
+    if (!booking || booking.tenantId !== tenantId) {
+      return undefined;
+    }
+    return booking;
   }
 }
 
