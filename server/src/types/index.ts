@@ -17,6 +17,12 @@ export interface Pet {
 
 export type BookingStatus = 'requested' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled';
 
+export interface StatusChange {
+  from: BookingStatus;
+  to: BookingStatus;
+  changedAt: string;
+  changedBy: string;
+}
 export interface Booking {
   id: string;
   tenantId: string;
@@ -31,6 +37,7 @@ export interface Booking {
   updatedAt: string;
   statusChangedAt: string;
   statusChangedBy: string;
+  statusHistory: StatusChange[]
 }
 
 export interface Sitter {
@@ -53,6 +60,11 @@ export interface PaginatedResult<T> {
   page: number;
   limit: number;
   totalPages: number;
+}
+
+export interface PageInput {
+  page: number;
+  limit: number;
 }
 
 // Valid status transitions

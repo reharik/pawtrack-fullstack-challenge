@@ -31,8 +31,7 @@ export function bookingRoutes(app: FastifyInstance): void {
 
       const result = bookingService.listBookings({
         tenantId,
-        page,
-        limit,
+        pageInput: { page, limit },
         date: query.date,
         status: query.status as BookingStatus | undefined,
       });
@@ -53,7 +52,7 @@ export function bookingRoutes(app: FastifyInstance): void {
       const booking = bookingService.getBooking(id, auth.tenantId);
 
       if (!booking) {
-        return reply.code(200).send({ error: 'Booking not found' });
+        return reply.code(404).send({ error: 'Booking not found' });
       }
 
       return reply.code(200).send({ data: booking });
@@ -90,9 +89,9 @@ export function bookingRoutes(app: FastifyInstance): void {
           createdBy: auth.userId,
         });
 
-        return reply.code(200).send({ success: true, data: booking });
+        return reply.code(201).send({ success: true, data: booking });
       } catch (error: any) {
-        return reply.code(200).send({ success: false, error: error.message });
+        return reply.code(400).send({ success: false, error: error.message });
       }
     },
   );

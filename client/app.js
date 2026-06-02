@@ -72,7 +72,7 @@ function initFilters() {
 let latestRequestId = 0;
 
 async function fetchBookings(currentFilters) {
-  const requestId = latestRequestId++;
+  const requestId = ++latestRequestId;
   const loadingEl = document.getElementById('loading-indicator');
   const errorEl = document.getElementById('error-message');
   const listEl = document.getElementById('bookings-list');
@@ -119,6 +119,12 @@ async function fetchBookings(currentFilters) {
   }
 }
 
+function escapeHtml(value) {
+  const div = document.createElement('div');
+  div.textContent = value ?? '';
+  return div.innerHTML;
+}
+
 function renderBookings(bookings, container) {
   if (!bookings || bookings.length === 0) {
     container.innerHTML = '<p style="text-align: center; color: #999; padding: 2rem;">No bookings found.</p>';
@@ -139,7 +145,7 @@ function renderBookings(bookings, container) {
             <span>Date: ${date}</span>
             <span>Time: ${booking.startTime} - ${booking.endTime}</span>
           </div>
-          <div class="booking-notes">${booking.notes}</div>
+          <div class="booking-notes">${escapeHtml(booking.notes)}</div>
         </div>
         <div class="booking-actions">
           <span class="status-badge status-${booking.status}">

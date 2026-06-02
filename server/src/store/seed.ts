@@ -42,31 +42,31 @@ export const bookings: Booking[] = [
     id: 'booking_001', tenantId: 'tenant_portland', petId: 'pet_001', sitterId: 'sitter_001',
     status: 'confirmed', scheduledDate: '2026-04-10T09:00:00-07:00', startTime: '09:00', endTime: '11:00',
     notes: 'Morning walk and feeding. Key under mat.', createdAt: '2026-04-01T10:00:00Z',
-    updatedAt: '2026-04-02T14:00:00Z', statusChangedAt: '2026-04-02T14:00:00Z', statusChangedBy: 'user_admin_portland',
+    updatedAt: '2026-04-02T14:00:00Z', statusChangedAt: '2026-04-02T14:00:00Z', statusChangedBy: 'user_admin_portland', statusHistory: []
   },
   {
     id: 'booking_002', tenantId: 'tenant_portland', petId: 'pet_002', sitterId: 'sitter_002',
     status: 'requested', scheduledDate: '2026-04-11T17:00:00-07:00', startTime: '17:00', endTime: '19:00',
     notes: 'Evening medication and feeding.', createdAt: '2026-04-03T09:00:00Z',
-    updatedAt: '2026-04-03T09:00:00Z', statusChangedAt: '2026-04-03T09:00:00Z', statusChangedBy: 'user_staff_portland',
+    updatedAt: '2026-04-03T09:00:00Z', statusChangedAt: '2026-04-03T09:00:00Z', statusChangedBy: 'user_staff_portland', statusHistory: []
   },
   {
     id: 'booking_003', tenantId: 'tenant_portland', petId: 'pet_003', sitterId: 'sitter_001',
     status: 'in_progress', scheduledDate: '2026-04-08T14:00:00-07:00', startTime: '14:00', endTime: '16:00',
     notes: 'Afternoon walk. Avoid dog park on Oak Street.', createdAt: '2026-04-01T08:00:00Z',
-    updatedAt: '2026-04-08T14:05:00Z', statusChangedAt: '2026-04-08T14:05:00Z', statusChangedBy: 'sitter_001',
+    updatedAt: '2026-04-08T14:05:00Z', statusChangedAt: '2026-04-08T14:05:00Z', statusChangedBy: 'sitter_001', statusHistory: []
   },
   {
     id: 'booking_004', tenantId: 'tenant_portland', petId: 'pet_004', sitterId: 'sitter_002',
     status: 'completed', scheduledDate: '2026-04-07T10:00:00-07:00', startTime: '10:00', endTime: '11:30',
     notes: 'Quick check-in. Refill water and hay.', createdAt: '2026-03-30T12:00:00Z',
-    updatedAt: '2026-04-07T11:45:00Z', statusChangedAt: '2026-04-07T11:45:00Z', statusChangedBy: 'sitter_002',
+    updatedAt: '2026-04-07T11:45:00Z', statusChangedAt: '2026-04-07T11:45:00Z', statusChangedBy: 'sitter_002', statusHistory: []
   },
   {
     id: 'booking_005', tenantId: 'tenant_portland', petId: 'pet_005', sitterId: 'sitter_001',
     status: 'requested', scheduledDate: '2026-04-12T08:00:00-07:00', startTime: '08:00', endTime: '09:00',
     notes: 'Feed and cover cage check. <b>Owner traveling until 4/15</b>', createdAt: '2026-04-05T16:00:00Z',
-    updatedAt: '2026-04-05T16:00:00Z', statusChangedAt: '2026-04-05T16:00:00Z', statusChangedBy: 'user_staff_portland',
+    updatedAt: '2026-04-05T16:00:00Z', statusChangedAt: '2026-04-05T16:00:00Z', statusChangedBy: 'user_staff_portland', statusHistory: []
   },
   // Timezone edge case: This booking is at 11:30 PM Pacific = April 9 06:30 UTC
   // String prefix match on "2026-04-08" would MISS this if filtering by April 8 in Pacific time
@@ -75,7 +75,7 @@ export const bookings: Booking[] = [
     id: 'booking_006', tenantId: 'tenant_portland', petId: 'pet_001', sitterId: 'sitter_002',
     status: 'confirmed', scheduledDate: '2026-04-09T06:30:00Z', startTime: '23:30', endTime: '00:30',
     notes: 'Late night check-in. Dog needs final walk before bed.', createdAt: '2026-04-02T10:00:00Z',
-    updatedAt: '2026-04-03T08:00:00Z', statusChangedAt: '2026-04-03T08:00:00Z', statusChangedBy: 'user_admin_portland',
+    updatedAt: '2026-04-03T08:00:00Z', statusChangedAt: '2026-04-03T08:00:00Z', statusChangedBy: 'user_admin_portland', statusHistory: []
   },
 
   // Seattle bookings
@@ -83,32 +83,32 @@ export const bookings: Booking[] = [
     id: 'booking_007', tenantId: 'tenant_seattle', petId: 'pet_006', sitterId: 'sitter_003',
     status: 'confirmed', scheduledDate: '2026-04-10T07:00:00-07:00', startTime: '07:00', endTime: '09:00',
     notes: 'Morning run. Luna needs at least 2 miles.', createdAt: '2026-04-02T11:00:00Z',
-    updatedAt: '2026-04-03T09:00:00Z', statusChangedAt: '2026-04-03T09:00:00Z', statusChangedBy: 'user_admin_seattle',
+    updatedAt: '2026-04-03T09:00:00Z', statusChangedAt: '2026-04-03T09:00:00Z', statusChangedBy: 'user_admin_seattle', statusHistory: []
   },
   {
     id: 'booking_008', tenantId: 'tenant_seattle', petId: 'pet_007', sitterId: 'sitter_004',
     status: 'requested', scheduledDate: '2026-04-11T15:00:00-07:00', startTime: '15:00', endTime: '16:30',
     notes: 'Check on Shadow. Play session and feeding.', createdAt: '2026-04-04T10:00:00Z',
-    updatedAt: '2026-04-04T10:00:00Z', statusChangedAt: '2026-04-04T10:00:00Z', statusChangedBy: 'user_staff_seattle',
+    updatedAt: '2026-04-04T10:00:00Z', statusChangedAt: '2026-04-04T10:00:00Z', statusChangedBy: 'user_staff_seattle', statusHistory: []
   },
   {
     id: 'booking_009', tenantId: 'tenant_seattle', petId: 'pet_008', sitterId: 'sitter_003',
     status: 'in_progress', scheduledDate: '2026-04-08T10:00:00-07:00', startTime: '10:00', endTime: '12:00',
     notes: 'Walk and grooming. Bring lint roller.', createdAt: '2026-04-01T14:00:00Z',
-    updatedAt: '2026-04-08T10:10:00Z', statusChangedAt: '2026-04-08T10:10:00Z', statusChangedBy: 'sitter_003',
+    updatedAt: '2026-04-08T10:10:00Z', statusChangedAt: '2026-04-08T10:10:00Z', statusChangedBy: 'sitter_003', statusHistory: []
   },
   {
     id: 'booking_010', tenantId: 'tenant_seattle', petId: 'pet_009', sitterId: 'sitter_004',
     status: 'completed', scheduledDate: '2026-04-07T13:00:00-07:00', startTime: '13:00', endTime: '14:00',
     notes: 'Quick visit. Fresh water and litter box.', createdAt: '2026-03-31T09:00:00Z',
-    updatedAt: '2026-04-07T14:15:00Z', statusChangedAt: '2026-04-07T14:15:00Z', statusChangedBy: 'sitter_004',
+    updatedAt: '2026-04-07T14:15:00Z', statusChangedAt: '2026-04-07T14:15:00Z', statusChangedBy: 'sitter_004', statusHistory: []
   },
   // Timezone edge case: 11:45 PM Pacific on April 10 = April 11 06:45 UTC
   {
     id: 'booking_011', tenantId: 'tenant_seattle', petId: 'pet_006', sitterId: 'sitter_004',
     status: 'requested', scheduledDate: '2026-04-11T06:45:00Z', startTime: '23:45', endTime: '00:45',
     notes: 'Late night potty break. Luna gets restless if skipped.', createdAt: '2026-04-05T08:00:00Z',
-    updatedAt: '2026-04-05T08:00:00Z', statusChangedAt: '2026-04-05T08:00:00Z', statusChangedBy: 'user_admin_seattle',
+    updatedAt: '2026-04-05T08:00:00Z', statusChangedAt: '2026-04-05T08:00:00Z', statusChangedBy: 'user_admin_seattle', statusHistory: []
   },
 
   // Austin bookings
@@ -116,55 +116,55 @@ export const bookings: Booking[] = [
     id: 'booking_012', tenantId: 'tenant_austin', petId: 'pet_010', sitterId: 'sitter_005',
     status: 'confirmed', scheduledDate: '2026-04-10T08:00:00-05:00', startTime: '08:00', endTime: '10:00',
     notes: 'Morning agility session. Set up cones in backyard.', createdAt: '2026-04-02T15:00:00Z',
-    updatedAt: '2026-04-03T10:00:00Z', statusChangedAt: '2026-04-03T10:00:00Z', statusChangedBy: 'user_admin_austin',
+    updatedAt: '2026-04-03T10:00:00Z', statusChangedAt: '2026-04-03T10:00:00Z', statusChangedBy: 'user_admin_austin', statusHistory: []
   },
   {
     id: 'booking_013', tenantId: 'tenant_austin', petId: 'pet_011', sitterId: 'sitter_006',
     status: 'requested', scheduledDate: '2026-04-11T16:00:00-05:00', startTime: '16:00', endTime: '17:00',
     notes: 'Evening feeding. Peaches should be in the yard.', createdAt: '2026-04-04T11:00:00Z',
-    updatedAt: '2026-04-04T11:00:00Z', statusChangedAt: '2026-04-04T11:00:00Z', statusChangedBy: 'user_staff_austin',
+    updatedAt: '2026-04-04T11:00:00Z', statusChangedAt: '2026-04-04T11:00:00Z', statusChangedBy: 'user_staff_austin', statusHistory: []
   },
   {
     id: 'booking_014', tenantId: 'tenant_austin', petId: 'pet_012', sitterId: 'sitter_005',
     status: 'in_progress', scheduledDate: '2026-04-08T07:00:00-05:00', startTime: '07:00', endTime: '08:30',
     notes: 'Early walk before it gets hot. Bring water bowl.', createdAt: '2026-04-01T09:00:00Z',
-    updatedAt: '2026-04-08T07:05:00Z', statusChangedAt: '2026-04-08T07:05:00Z', statusChangedBy: 'sitter_005',
+    updatedAt: '2026-04-08T07:05:00Z', statusChangedAt: '2026-04-08T07:05:00Z', statusChangedBy: 'sitter_005', statusHistory: []
   },
   {
     id: 'booking_015', tenantId: 'tenant_austin', petId: 'pet_013', sitterId: 'sitter_006',
     status: 'completed', scheduledDate: '2026-04-07T09:00:00-05:00', startTime: '09:00', endTime: '10:00',
     notes: 'Morning check. All windows were secure.', createdAt: '2026-03-30T14:00:00Z',
-    updatedAt: '2026-04-07T10:10:00Z', statusChangedAt: '2026-04-07T10:10:00Z', statusChangedBy: 'sitter_006',
+    updatedAt: '2026-04-07T10:10:00Z', statusChangedAt: '2026-04-07T10:10:00Z', statusChangedBy: 'sitter_006', statusHistory: []
   },
   {
     id: 'booking_016', tenantId: 'tenant_austin', petId: 'pet_010', sitterId: 'sitter_006',
     status: 'cancelled', scheduledDate: '2026-04-06T14:00:00-05:00', startTime: '14:00', endTime: '16:00',
     notes: 'Cancelled - owner returned early from trip.', createdAt: '2026-03-29T10:00:00Z',
-    updatedAt: '2026-04-05T18:00:00Z', statusChangedAt: '2026-04-05T18:00:00Z', statusChangedBy: 'user_admin_austin',
+    updatedAt: '2026-04-05T18:00:00Z', statusChangedAt: '2026-04-05T18:00:00Z', statusChangedBy: 'user_admin_austin', statusHistory: []
   },
   // Extra bookings for pagination testing (Portland)
   {
     id: 'booking_017', tenantId: 'tenant_portland', petId: 'pet_001', sitterId: 'sitter_001',
     status: 'completed', scheduledDate: '2026-04-05T09:00:00-07:00', startTime: '09:00', endTime: '11:00',
     notes: 'Regular morning walk.', createdAt: '2026-03-28T10:00:00Z',
-    updatedAt: '2026-04-05T11:10:00Z', statusChangedAt: '2026-04-05T11:10:00Z', statusChangedBy: 'sitter_001',
+    updatedAt: '2026-04-05T11:10:00Z', statusChangedAt: '2026-04-05T11:10:00Z', statusChangedBy: 'sitter_001', statusHistory: []
   },
   {
     id: 'booking_018', tenantId: 'tenant_portland', petId: 'pet_002', sitterId: 'sitter_002',
     status: 'completed', scheduledDate: '2026-04-04T17:00:00-07:00', startTime: '17:00', endTime: '19:00',
     notes: 'Medication administered. Cat seemed happy.', createdAt: '2026-03-27T09:00:00Z',
-    updatedAt: '2026-04-04T19:10:00Z', statusChangedAt: '2026-04-04T19:10:00Z', statusChangedBy: 'sitter_002',
+    updatedAt: '2026-04-04T19:10:00Z', statusChangedAt: '2026-04-04T19:10:00Z', statusChangedBy: 'sitter_002', statusHistory: []
   },
   {
     id: 'booking_019', tenantId: 'tenant_portland', petId: 'pet_003', sitterId: 'sitter_001',
     status: 'completed', scheduledDate: '2026-04-03T14:00:00-07:00', startTime: '14:00', endTime: '16:00',
     notes: 'Good walk. No issues with other dogs today.', createdAt: '2026-03-26T08:00:00Z',
-    updatedAt: '2026-04-03T16:05:00Z', statusChangedAt: '2026-04-03T16:05:00Z', statusChangedBy: 'sitter_001',
+    updatedAt: '2026-04-03T16:05:00Z', statusChangedAt: '2026-04-03T16:05:00Z', statusChangedBy: 'sitter_001', statusHistory: []
   },
   {
     id: 'booking_020', tenantId: 'tenant_portland', petId: 'pet_004', sitterId: 'sitter_002',
     status: 'completed', scheduledDate: '2026-04-02T10:00:00-07:00', startTime: '10:00', endTime: '11:30',
     notes: 'Hay refilled. Water bottle was almost empty.', createdAt: '2026-03-25T12:00:00Z',
-    updatedAt: '2026-04-02T11:40:00Z', statusChangedAt: '2026-04-02T11:40:00Z', statusChangedBy: 'sitter_002',
+    updatedAt: '2026-04-02T11:40:00Z', statusChangedAt: '2026-04-02T11:40:00Z', statusChangedBy: 'sitter_002', statusHistory: []
   },
 ];

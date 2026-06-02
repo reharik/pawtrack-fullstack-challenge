@@ -2,6 +2,7 @@ import { v4 as uuid } from 'uuid';
 import type {
   Booking,
   BookingStatus,
+  PageInput,
   PaginatedResult,
 } from '../types/index.js';
 import { VALID_TRANSITIONS } from '../types/index.js';
@@ -10,8 +11,7 @@ import { eventBus } from './event-emitter.js';
 
 interface ListBookingsParams {
   tenantId: string;
-  page: number;
-  limit: number;
+  pageInput: PageInput;
   date?: string;
   status?: BookingStatus;
 }
@@ -48,14 +48,17 @@ export class BookingService {
    * Supports pagination.
    */
   public listBookings(params: ListBookingsParams): PaginatedResult<Booking> {
-    const { tenantId, page, limit, date, status } = params;
+    const { tenantId, pageInput, date, status } = params;
 
     let bookings = store.getBookingsByTenant(tenantId);
 
     // Filter by date if provided
     if (date) {
+      bookings = bookings.filter(b => {
       // Match bookings on the requested date
-      bookings = bookings.filter((b) => b.scheduledDate.startsWith(date));
+      const bookingDay = new Date(b.scheduledDate).toISOString().slice(0, 10);
+        return bookingDay === date;  // date is 'YYYY-MM-DD'
+      });
     }
 
     // Filter by status if provided
@@ -71,16 +74,15 @@ export class BookingService {
     );
 
     const total = bookings.length;
-    const totalPages = Math.ceil(total / limit);
+    const totalPages = Math.ceil(total / pageInput.limit);
 
-    const offset = page * limit;
-    const paginatedBookings = bookings.slice(offset, offset + limit);
+    const offset = (pageInput.page - 1) * pageInput.limit;
+    const paginatedBookings = bookings.slice(offset, offset + pageInput.limit);
 
     return {
       data: paginatedBookings,
       total,
-      page,
-      limit,
+      ...pageInput,
       totalPages,
     };
   }
@@ -154,6 +156,7 @@ export class BookingService {
       updatedAt: now,
       statusChangedAt: now,
       statusChangedBy: createdBy,
+      statusHistory: [],
     };
 
     store.createBooking(booking);
@@ -192,13 +195,16 @@ export class BookingService {
       };
     }
 
-    // Overwrite status — no history kept
     const updatedBooking: Booking = {
       ...booking,
       status: newStatus,
       updatedAt: new Date().toISOString(),
       statusChangedAt: new Date().toISOString(),
       statusChangedBy: changedBy,
+      statusHistory: [
+        ...(booking.statusHistory ?? []),
+        { from: booking.status, to: newStatus, changedBy, changedAt: new Date().toISOString() },
+      ],
     };
 
     store.updateBooking(updatedBooking);

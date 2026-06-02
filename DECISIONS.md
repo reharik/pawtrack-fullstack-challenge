@@ -97,6 +97,7 @@ the tenant (only `tenantId` is checked against the store).
 File: `server/src/middleware/auth.ts`
 Why: Callers can impersonate arbitrary user IDs within a valid tenant.
 Sev: critical
+fix: There is no representation of user in the current database, One should be added and the user should be validated against the tenant.
 
 ### HIGH — Other defects
 
@@ -106,12 +107,14 @@ Why: Timezone boundaries break prefix matching (see seed comments on
 `booking_006` / `booking_011`); bookings appear on the wrong day or vanish from
 filtered views.
 Sev: high
+Fix: Normalize both sides to calendar day for comparison 
 
 What: Pagination offset is computed as `page * limit` while `page` is 1-based
 from the client.
 File: `server/src/services/booking-service.ts`
 Why: Page 1 skips the first `limit` rows; every page returns the wrong slice.
 Sev: high
+Fix: address off by 1 issue in the query
 
 What: Pet and booking `notes` are stored and returned as raw strings; seed data
 includes HTML/script payloads.
@@ -120,12 +123,12 @@ Why: Stored XSS. The render site that executes this is `renderBookings` in the
 client (see Frontend Approach) — the API should sanitize and/or clients must
 escape.
 Sev: high
+Fix: Fixed on frontend. 
 
 What: Scheduling/audit timestamps are modeled as `string` instead of a date
 type in the domain.
 File: `server/src/types/index.ts`, services
-Why: A scheduling app should model dates/times in the domain to avoid repeated
-parsing and fragile string comparisons (e.g. the `startsWith` bug above).
+Why: A scheduling app should model dates/times in the domain to avoid repeated parsing and fragile string comparisons (e.g. the `startsWith` bug above).
 Sev: high
 
 ### MEDIUM — Cross-cutting API issues (apply to all booking & pet routes)
@@ -137,6 +140,7 @@ File: `server/src/routes/bookings.ts`, `server/src/routes/pets.ts`
 Why: Malformed or malicious input reaches the services and store unchecked;
 invalid enums/dates should be rejected at the seam, not deep in filtering.
 Sev: medium (high where it touches pets/bookings reads)
+Fix: Implement JSON schema validation in routes as per the Booking route
 
 What: HTTP semantics are inconsistent — routes return `200` for errors and
 missing resources (`POST`/`PATCH` return `{ success: false }` with `200`;
@@ -145,6 +149,7 @@ File: `server/src/routes/bookings.ts`, `server/src/routes/pets.ts`
 Why: The docs describe a REST API; clients expect `4xx`/`5xx` and `404` for
 missing resources. `200` should mean a verified success.
 Sev: medium
+Fix: Update to return proper http status codes
 
 What: Handlers rely on `as` casts for params/query/body and attach auth via
 `(request as any).auth` instead of Fastify generics / JSON Schema / request
@@ -153,12 +158,14 @@ File: `server/src/middleware/auth.ts`, `server/src/routes/*.ts`
 Why: Bypasses type safety; typed routing or schema validation would catch
 misuse at compile time and supports a no-`as` lint rule.
 Sev: medium
+Fix: Implement JSON schema validation at route as per Booking endpoint
 
 What: `X-User-Role` is not validated against allowed values before being cast
 to `AuthContext['role']`.
 File: `server/src/middleware/auth.ts`
 Why: Unknown roles slip through; authorization logic can't rely on a closed set.
 Sev: medium
+Fix: Validate provided role against know valid roles in auth middleware
 
 What: Status changes overwrite the booking record with no status history or
 audit trail.
@@ -166,6 +173,7 @@ File: `server/src/services/booking-service.ts`
 Why: Can't reconstruct who changed what or roll back; weak for compliance and
 debugging.
 Sev: medium
+Fix: add a StatusChange array to the Booking object and persist updated status changes in array.
 
 What: Host, port, and listen options are hard-coded rather than read from
 config/env.
@@ -178,6 +186,7 @@ with the existing `PaginatedResult<T>`.
 File: `server/src/types/index.ts`
 Why: Shared pagination types reduce duplication and casting.
 Sev: medium
+Fix: Implement PageInput type for 'page' and 'limit'
 
 ### NEEDS-CLARIFICATION — possible owner-scoping gap
 
@@ -274,6 +283,7 @@ Why: This is the execution site for the stored-XSS finding in the audit — seed
 notes contain script payloads that run here. Escape on render or sanitize
 server-side.
 Sev: high
+Fix: Create string sanitizer for string literal html.
 
 What: Pagination buttons use inline `onclick="goToPage(...)"` (requiring a
 global) while status buttons use `addEventListener`.

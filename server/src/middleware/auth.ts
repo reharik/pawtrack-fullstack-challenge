@@ -35,6 +35,13 @@ export async function authMiddleware(
     });
   }
 
+  if(!['admin', 'staff', 'sitter'].includes(role)) {
+    return reply.code(401).send({
+      error: 'Unauthorized',
+      message: 'Invalid role',
+    });
+  }
+
   const authContext: AuthContext = {
     tenantId,
     userId,
